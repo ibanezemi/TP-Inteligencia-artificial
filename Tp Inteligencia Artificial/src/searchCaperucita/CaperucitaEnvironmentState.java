@@ -6,6 +6,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
@@ -15,65 +16,104 @@ import java.util.concurrent.TimeUnit;
 import frsf.cidisi.faia.state.EnvironmentState;
 
 public class CaperucitaEnvironmentState extends EnvironmentState {
-	char posicion;
-	private String bosque;
-	private String posiciones_lobo;
-	private String posiciones_dulces;
+	private List<String> bosque = new ArrayList<String>();
+	private List<String> posiciones_lobo = new ArrayList<String>();
+	private List<String> posiciones_dulces = new ArrayList<String>();
 	private String posicion_lobo;
-
+	private String posicion_caperucita;
+	private int vidas;
 	
-	public CaperucitaEnvironmentState(String bosque, String posiciones_lobo, String posiciones_dulces,
-			String posicion_lobo) {
-		super();
-		this.bosque = bosque;
-		this.posiciones_lobo = posiciones_lobo;
-		this.posiciones_dulces = posiciones_dulces;
-		this.posicion_lobo = posicion_lobo;
+	
+
+	public int getVidas() {
+		return vidas;
 	}
-	
-	
 
+	public void setVidas(int vidas) {
+		this.vidas = vidas;
+	}
+
+	public String getPosicion_caperucita() {
+		return posicion_caperucita;
+	}
+
+	public void setPosicion_caperucita(String posicion_caperucita) {
+		this.posicion_caperucita = posicion_caperucita;
+	}
+
+	/*Constructor*/
 	public CaperucitaEnvironmentState() throws FileNotFoundException {
 			this.initState();
 	}
 
+	/*MAIN*/
+	public static void main(String[] args) throws FileNotFoundException {
+		
+	}
+	
 
 	@Override
 	public void initState() throws FileNotFoundException {
 		// TODO Auto-generated method stub
+		 String[] bosqueaux;
+		 List<String> bosaux = new ArrayList<String>();
+	  	 String[] posiciones_lobo_aux;
+		 String[] posiciones_dulces_aux;
+		 String posicion_lobo;
+		
 		File ambiente = new File("/Users/nicoc/git/TP-Inteligencia-Artificial/ambiente.txt");
 		Scanner scan_ambiente = new Scanner(ambiente);
 
-		this.bosque = scan_ambiente.nextLine();
-		this.posiciones_dulces = scan_ambiente.nextLine();
-		this.posiciones_lobo = scan_ambiente.nextLine();
-		this.posicion_lobo = "A";
-
-		System.out.println("Ambiente: " + bosque);
-		System.out.println("Posiciones de los dulces: " + posiciones_dulces);
-		System.out.println("Posiciones disponibles para el lobo: " + posiciones_lobo);
-		System.out.println("Posicion actual del lobo: " + posicion_lobo);
-
-		scan_ambiente.close();
-		
-		/*colocamos percepciones vacias, a todos los sucesores */
-		String [] listaBosque = bosque.split(",");
-		for(int i=0; i<listaBosque.length; i++) {
-			listaBosque[i] = CaperucitaPerception.EMPTY_PERCEPTION;
+		bosqueaux = scan_ambiente.nextLine().split(",");
+		posiciones_dulces_aux = scan_ambiente.nextLine().split(",");
+		posiciones_lobo_aux = scan_ambiente.nextLine().split(",");
+		posicion_lobo = "A";
+		posicion_caperucita = "I";
+	
+		//Inicializamos al bosque con las percepcion vacias "V"
+		//Agregamos bosaux para luego compararlo con los dulces y de esa manera cambiarle la Percepcion
+		for(int i=0 ; i<bosqueaux.length ; i++) {
+			this.bosque.add(bosqueaux[i]);
+			bosaux.add(bosqueaux[i]);
+			this.bosque.set(i, CaperucitaPerception.EMPTY_PERCEPTION);
+		}
+		for(int i=0 ; i<posiciones_dulces_aux.length ; i++) {
+			this.posiciones_dulces.add(posiciones_dulces_aux[i]);
+		}
+		//Asignamos a las posiciones de los dulces, la percepcion de los dulces.
+		for(int i=0 ; i<bosaux.size() ; i++) {
+			for(int j=0 ; j<this.posiciones_dulces.size(); j++) {
+				if(bosaux.get(i).equals(this.posiciones_dulces.get(j))) {
+					this.bosque.set(i, CaperucitaPerception.FOOD_PERCEPTION);
+				}
+			}
 		}
 		
-		/*De la lista de dulces, asignamos la percepcion dulces*/
-		String[] listaDulces = posiciones_dulces.split(",");
-		for (int j=0 ; j<listaDulces.length; j++) {
-			listaDulces[j] = CaperucitaPerception.FOOD_PERCEPTION;
-		}
-		/*Posicion del lobo que se vaya cambiando por tiempo, en este caso 10 segundos y agregamos percepcion enemigo */
+		this.setVidas(3);
+		
+		/*
+		Pruebas de salida para ver funcionamiento en main.
+		System.out.println(this.bosque);
+		
+		System.out.println("----------------------------------------------------------------------------------");
+		
+		System.out.println("Ambiente: " + this.bosque);
+		System.out.println("Posiciones de los dulces: " + this.posiciones_dulces);
+		System.out.println("Posiciones disponibles para el lobo: " + this.posiciones_lobo);
+		System.out.println("Posicion actual del lobo: " + this.posicion_lobo);
+		System.out.println("Posicion inicial: " + this.posicion_caperucita);
+		System.out.println("----------------------------------------------------------------------------------");
+		*/
+		
+		//Posicion del lobo que se vaya cambiando por tiempo, en este caso 10 segundos y agregamos percepcion enemigo
 		final Runnable tarea = () -> {
-			this.posicion_lobo = updatePosicionLobo(this.posiciones_lobo);
-			posicion_lobo = CaperucitaPerception.ENEMY_PERCEPTION;
+			//posicion_lobo = updatePosicionLobo(this.posiciones_lobo);
+			//posicion_lobo = CaperucitaPerception.ENEMY_PERCEPTION;
 		};
 		ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 		executorService.scheduleAtFixedRate(tarea, 0, 10, TimeUnit.SECONDS);
+		
+		scan_ambiente.close();
 		
 	}
 
@@ -91,46 +131,7 @@ public class CaperucitaEnvironmentState extends EnvironmentState {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getBosque() {
-		return bosque;
-	}
-
-	public void setBosque(String bosque) {
-		this.bosque = bosque;
-	}
-
-	public String getPosiciones_lobo() {
-		return posiciones_lobo;
-	}
-
-	public void setPosiciones_lobo(String posiciones_lobo) {
-		this.posiciones_lobo = posiciones_lobo;
-	}
-
-	public String getPosiciones_dulces() {
-		return posiciones_dulces;
-	}
-
-	public void setPosiciones_dulces(String posiciones_dulces) {
-		this.posiciones_dulces = posiciones_dulces;
-	}
-
-	public String getPosicion_lobo() {
-		return posicion_lobo;
-	}
-
-	public void setPosicion_lobo(String posicion_lobo) {
-		this.posicion_lobo = posicion_lobo;
-	}
-
-	public char getAgentPositions() {
-		// TODO Auto-generated method stub
-		// posi=agent.posicion ---> Deberiamos guardar la posicon del agente, entonces
-		// retornamos dicha posicion
-		return posicion;
+		return this.bosque.toString();
 	}
 
 }

@@ -18,35 +18,35 @@ public class CaperucitaPerception extends Perception {
      * Definimos los sensores que tendra caperucita para determinar
      * lo que hay en la proxima accion que tome
      */
-    private int upSensor;
-    private int donwSensor;
-    private int leftSensor;
-    private int rightSensor;
+    private String upSensor;
+    private String donwSensor;
+    private String leftSensor;
+    private String rightSensor;
    
     public CaperucitaPerception(Agent agent, Environment environment) {
     	super(agent, environment);
     }
     
+    public CaperucitaPerception() {
+		
+	}
+    
     
 	@Override
 	public void initPerception(Agent agent, Environment environment) {
-		// TODO Auto-generated method stub
-		/*
-		 * Establecemos el agente, y el ambiente. 
-		 * Asi tambien obtenemos el estado del ambiente, de esta forma sabemos que van a percibir los sensores.
-		 */
+		//Creamos agente, ambiente, y estado ambiente
 		CaperucitaAgent caperucitaAgent = (CaperucitaAgent) agent;
 		CaperucitaEnvironment caperucitaEnvironment = (CaperucitaEnvironment) environment;
 		CaperucitaEnvironmentState environmentState = caperucitaEnvironment.getEnvironmentState();
 		
 		//definimos la posicion del agente, para luego comprarla con lo que hay en el siguiente movimiento
-		char posicion = environmentState.getAgentPositions();
-		
+		String posicion = environmentState.getPosicion_caperucita();
+		/*
 		this.setUpSensor(caperucitaEnvironment.getUpPosition(posicion));
 		this.setDonwSensor(caperucitaEnvironment.getDownPosition(posicion));
 		this.setLeftSensor(caperucitaEnvironment.getLeftPosition(posicion));
 		this.setRightSensor(caperucitaEnvironment.getRightPosition());
-		
+		*/
 		
 	}
 
@@ -81,44 +81,46 @@ public class CaperucitaPerception extends Perception {
 	}
 
 
-	public int getUpSensor() {
+	public String getUpSensor() {
 		return upSensor;
 	}
 
 
-	public void setUpSensor(int upSensor) {
+	public void setUpSensor(String upSensor) {
 		this.upSensor = upSensor;
 	}
 
 
-	public int getDonwSensor() {
+	public String getDonwSensor() {
 		return donwSensor;
 	}
 
 
-	public void setDonwSensor(int donwSensor) {
+	public void setDonwSensor(String donwSensor) {
 		this.donwSensor = donwSensor;
 	}
 
 
-	public int getLeftSensor() {
+	public String getLeftSensor() {
 		return leftSensor;
 	}
 
 
-	public void setLeftSensor(int leftSensor) {
+	public void setLeftSensor(String leftSensor) {
 		this.leftSensor = leftSensor;
 	}
 
 
-	public int getRightSensor() {
+	public String getRightSensor() {
 		return rightSensor;
 	}
 
 
-	public void setRightSensor(int rightSensor) {
+	public void setRightSensor(String rightSensor) {
 		this.rightSensor = rightSensor;
 	}
-    
+
+	
+	
     
 }

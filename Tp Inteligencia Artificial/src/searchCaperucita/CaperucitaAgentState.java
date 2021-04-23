@@ -2,91 +2,131 @@ package searchCaperucita;
 import frsf.cidisi.faia.agent.Perception;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 import frsf.cidisi.faia.agent.search.SearchBasedAgentState;
 
 public class CaperucitaAgentState extends SearchBasedAgentState {
-	private String initialNode;
 	/*
-	 * Variables del agente, que indiquen el estado del mismo. VERLO
+	 * PosicionInicial esta dado por los sucesores.get(0).get(0)
+	 * Posicion esta dada por los sucesores.get(0).get(..)
+	 * sucesores.get(0) --> nodosPrincipales ; sucesores.get(1) --> nodosArriba ; sucesores.get(2) --> nodosAbajo
+	 * sucesores.get(3) --> nodosDerecha ; sucesores.get(4) --> nodosIzquierda ; Aclaracion, con otro get() optenes el
+	 * correspondiente al nodoPrincipal
+	 * 
 	 */
-
+	
 	private String initialPosition;
-	private String position;
-	private String[] successor;
+	private String posicionCaperucita;
+	private List<List<String>> sucesores = new ArrayList<List<String>>();
 	private int life;
 	private int sweet;
-	private String[] directions;
 
 	/*
-	 * Creando Constructores de la clase CaperucitaAgentState, inicializando las
-	 * variables por parametro y otra sin paramentros-
+	 * Constructor CaperucitaAgentState, con parametros.
 	 */
-	public CaperucitaAgentState(String inicio, String[] suc, int li, int sw) {
-		this.initialPosition = inicio;
-		this.position = inicio;
-		this.successor = suc;
-		this.life = li;
-		this.sweet = sw;
-
+	public CaperucitaAgentState(String initialPosition, String posicion, List<List<String>> sucesores, int life,
+			int sweet) {
+		super();
+		this.initialPosition = initialPosition;
+		this.posicionCaperucita = posicion;
+		this.sucesores = sucesores;
+		this.life = life;
+		this.sweet = sweet;
 	}
-
+	
 	public CaperucitaAgentState() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
-	/*
-	 * initState() --> Considerando que pasamos por .txt los sucesores de cada nodo
-	 * existente, es decir, cada nodo estara conformado por
-	 * "arriba,abajo,derecha,izquierda", por lo que hacemos referencia a la primera
-	 * posicion a la posicion siguiente arriba, y asi sucesivamente. Ej: A =
-	 * {B,C,D,E} --> A[1]=Arriba ; A[2]=Abajo ; A[3]=Derecha ; A[4]=Izquierda. Si
-	 * alguno de estos es vacio = null ; entonces sabemos que no se podra mover para
-	 * dicha posicion.
-	 */
-
-	public void initState() throws FileNotFoundException {
-		File definicionSucesores = new File("/Users/marco_000/git/InitialStateCaperucita.txt");
-		Scanner scan_definiciones = new Scanner(definicionSucesores);
+	
+	/*MAIN*/
+	public static void main(String[] args) throws FileNotFoundException {
+		 
 		
-		String sucesores = "";
 		
-		//Se define la cantidad de sucesores
-		String cantidad_sucesores = "";
-		cantidad_sucesores = scan_definiciones.nextLine() ;
+		//System.out.println(sucesoresaux[1]);
 		
-		//Se pasa el nodo inicial
-		String nodo_inicial = "";
-		nodo_inicial = scan_definiciones.nextLine() ;
-		
-		String[] lista_sucesores = new String[Integer.parseInt(cantidad_sucesores)];
-		
-		//while para asignar los sucesores
-		while (scan_definiciones.hasNextLine()) {
-			sucesores = scan_definiciones.nextLine();
+		/*for(int i=0;i<sucesoresaux.length;i++) {
+			System.out.println(sucesoresaux[i]);
 		}
+		*/
 		
-		String[] parts = sucesores.split("/");    
 		
-		for(int j = 0; j<Integer.parseInt(cantidad_sucesores); j++) {
-			lista_sucesores[j] = Arrays.asList(parts).get(j);
-			System.out.println(lista_sucesores[j]);
+		//El segundo get es el que te indica si nos interesa arriba abajo,... --> System.out.println(sucesores.get(1).get(1));
+		
+		
+		
+		/*Movimiento para arriba */
+		/*
+		for (int i=0; i<sucesores.get(0).size() ; i++) {
+			if(sucesores.get(0).get(i).equals(posicionCaperucita)) {
+				posicionCaperucita= sucesores.get(4).get(i);
+			}
 		}
+		*/
+		//System.out.println(posicionCaperucita);
 		
-		scan_definiciones.close();
+		/*
+		System.out.println("caramelos: " + sweet + "vidas: "+ life+ "posicion inicial"+ initialPosition + "Caperucita " + posicionCaperucita);
 		
-		this.initialPosition = nodo_inicial;
-		this.position = nodo_inicial;
-		this.successor = lista_sucesores; //Aca para asignar los sucesores hay que ir recorriendolos, asi como esta ahora no se puede.
-		this.life = 3;
-		this.sweet = 0;	
+		for (int i=0; i<sucesores.get(0).size() ; i++) {
+			if(sucesores.get(0).get(i).equals(posicionCaperucita)) {
+				posicionCaperucita= sucesores.get(4).get(i);
+			}
+		}
+		System.out.println("caramelos: " + sweet + "vidas: "+ life+ "posicion inicial"+ initialPosition + "Caperucita " + posicionCaperucita);
 		
-		scan_definiciones.close();
+		/*
+		//Para simular que va a arriba la sentencia seria la siguiente. Suponiendo que esta en el sucesor A
+		System.out.println(sucesores.get(4).get(0));
+		System.out.println("--------------------------");
+		System.out.println(sucesores);
+		*/
 	}
 
+	public void initState() throws FileNotFoundException {
+		
+		String[] sucesoresaux;
+		//Copiamos el archivo agente.txt para inicializar los estados de Caperucita
+		
+		File definicionSucesores = new File("/Users/nicoc/git/TP-Inteligencia-Artificial/agente.txt");
+		Scanner scan_definiciones = new Scanner(definicionSucesores);
+		sucesoresaux = scan_definiciones.nextLine().split(",");
+		
+		/*
+		 * Definimos 5 ArrayList dentro, que nos indicara 0 NodosPrincipales ; 1 Arriba ; 2 Abajo ; 3 Derecha ; 4 Izquierda
+		 */
+		
+		for(int i=0;i<=4;i++) {
+			this.sucesores.add(new ArrayList<>());
+		}
+		
+		/*
+		 * Cargamos los valores mencionados anteriormente, segun el agente.txt cargado.
+		 */
+		
+		for(int i=0 ; i<sucesoresaux.length ; i = (i+5)) {
+			this.sucesores.get(0).add(sucesoresaux[i]);
+			this.sucesores.get(1).add(sucesoresaux[i+1]);
+			this.sucesores.get(2).add(sucesoresaux[i+2]);
+			this.sucesores.get(3).add(sucesoresaux[i+3]);
+			this.sucesores.get(4).add(sucesoresaux[i+4]);
+			}
+		
+		//Inicializamos los atributos del Agente
+		
+		this.sweet=0;
+		this.life=3;
+		this.posicionCaperucita = sucesores.get(0).get(0);
+		this.initialPosition = sucesores.get(0).get(0); //no se modifica se conserva en caso que tenga que volver al punto inicial
+		
+	}
+	
+/*
 	public void updateState(Perception p) {
 
 	}
@@ -95,9 +135,10 @@ public class CaperucitaAgentState extends SearchBasedAgentState {
 		if (!(obj instanceof CaperucitaAgentState)) {
             return false;
         }
-		return position.equals(((CaperucitaAgentState) obj).getPosition()) ;
+		return posicionCaperucita.equals(((CaperucitaAgentState) obj).getPosicionCaperucita()) ;
 	}
-
+	
+/*
 	public SearchBasedAgentState clone() {
 		CaperucitaAgentState nuevoEstado = new CaperucitaAgentState();
 		nuevoEstado.setPosition(position);
@@ -107,29 +148,25 @@ public class CaperucitaAgentState extends SearchBasedAgentState {
 		return nuevoEstado;
 	}
 	
+*/
+	
 	@Override
 	public String toString() {
-		return "CaperucitaAgentState [initialNode=" + initialNode + ", initialPosition=" + initialPosition
-				+ ", position=" + position + ", successor=" + Arrays.toString(successor) + ", life=" + life + ", sweet="
-				+ sweet + "]";
+		return "CaperucitaAgentState [initialPosition=" + initialPosition + ", posicionCaperucita=" + posicionCaperucita
+				+ ", sucesores=" + sucesores + ", life=" + life + ", sweet=" + sweet + "]";
 	}
 
-	/*
-	 * Verificamos, que el agente, tenga al menos una vida, de esta forma sabemos
-	 * que esta vivo.
-	 */
+	//Controlamos la cantidad de vidas del Agente
 	public boolean itsLive() {
-		// TODO Auto-generated method stub
 		if (life > 0) {
 			return true;
 		} else {
 			return false;
 		}
-
 	}
 
+	//Controlamos que sea el campo de flores (Objetivo)
 	public boolean isFlowes() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -137,6 +174,30 @@ public class CaperucitaAgentState extends SearchBasedAgentState {
 	 * Get and Set de las variables, para poder visualizarlas en otras clases de ser
 	 * necesario.
 	 */
+	
+	public String getInitialPosition() {
+		return initialPosition;
+	}
+
+	public void setInitialPosition(String initialPosition) {
+		this.initialPosition = initialPosition;
+	}
+
+	public String getPosicionCaperucita() {
+		return posicionCaperucita;
+	}
+
+	public void setPosicionCaperucita(String posicionCaperucita) {
+		this.posicionCaperucita = posicionCaperucita;
+	}
+
+	public List<List<String>> getSucesores() {
+		return sucesores;
+	}
+
+	public void setSucesores(List<List<String>> sucesores) {
+		this.sucesores = sucesores;
+	}
 
 	public String getInitialposition() {
 		return initialPosition;
@@ -146,32 +207,12 @@ public class CaperucitaAgentState extends SearchBasedAgentState {
 		this.initialPosition = initialposition;
 	}
 
-	public String[] getSuccessor() {
-		return successor;
-	}
-
-	public void setSuccessor(String[] successor) {
-		this.successor = successor;
-	}
-
 	public int getSweet() {
 		return sweet;
 	}
 
 	public void setSweet(int sweet) {
 		this.sweet = sweet;
-	}
-
-	public String getPosition() {
-		return position;
-	}
-
-	public void setPosition(String position) {
-		this.position = position;
-	}
-
-	public void setInitNode(String node) {
-		this.initialNode = node;
 	}
 
 	public int getLife() {
